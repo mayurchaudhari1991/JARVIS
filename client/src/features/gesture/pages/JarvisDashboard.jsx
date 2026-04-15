@@ -1,173 +1,206 @@
-import React, { useState, useCallback, useRef } from 'react';
-import './JarvisDashboard.css';
+import React, { useState, useCallback, useRef } from "react";
+import "./JarvisDashboard.css";
 
 // Feature components
-import GestureCamera from '../components/GestureCamera';
-import ObjectManipulation from '../../object/components/ObjectManipulation';
-import FloatingActions from '../../../shared/common/FloatingActions';
-import Instructions from '../../../shared/common/Instructions';
-import JarvisInterface from '../../chat/components/JarvisInterface';
-import VoiceControl from '../../voice/components/VoiceControl';
+import GestureCamera from "../components/GestureCamera";
+import ObjectManipulation from "../../object/components/ObjectManipulation";
+import FloatingNav from "../../../shared/common/FloatingNav";
+import SiriMic from "../../voice/components/SiriMic";
+import ScreenShare from "../components/ScreenShare";
 
-const JarvisDashboard = ({ isActive, connectionStatus, sendMessage, lastMessage, readyState }) => {
+const JarvisDashboard = ({
+  isActive,
+  connectionStatus,
+  sendMessage,
+  lastMessage,
+  readyState,
+}) => {
   const [lastGesture, setLastGesture] = useState(null);
-  const [messages, setMessages] = useState([]);
-  const [showCamera, setShowCamera] = useState(true);
   const [selectedAction, setSelectedAction] = useState(null);
   const [handTrackingData, setHandTrackingData] = useState(null);
   const [objectCount, setObjectCount] = useState(0);
-  const messagesEndRef = useRef(null);
+  const [showHelp, setShowHelp] = useState(false);
+
+  // Text to speech
+  const speakText = useCallback((text) => {
+    if ("speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 1.0;
+      utterance.pitch = 0.9;
+      utterance.volume = 1;
+
+      const voices = window.speechSynthesis.getVoices();
+      const jarvisVoice = voices.find(
+        (v) =>
+          v.name.includes("Male") ||
+          v.name.includes("British") ||
+          v.name.includes("Daniel") ||
+          v.name.includes("Google UK English Male"),
+      );
+      if (jarvisVoice) utterance.voice = jarvisVoice;
+
+      window.speechSynthesis.speak(utterance);
+    }
+  }, []);
 
   // Handle incoming messages
-  const handleServerMessage = (data) => {
-    switch (data.type) {
-      case 'connection':
-        addMessage({ type: 'system', text: data.message });
-        break;
-      case 'jarvis_response':
-        addMessage({ type: 'jarvis', text: data.text });
-        speakText(data.text);
-        break;
-      case 'gesture_recognized':
-        setLastGesture({
-          name: data.gesture,
-          command: data.command,
-          description: data.description,
-          timestamp: Date.now()
-        });
-        addMessage({ type: 'gesture', text: `Gesture detected: ${data.description}` });
-        break;
-      case 'voice_recognized':
-        addMessage({ type: 'user', text: data.text });
-        break;
-      case 'error':
-        addMessage({ type: 'error', text: data.message });
-        break;
-      default:
-        break;
-    }
-  };
+  const handleServerMessage = useCallback(
+    (data) => {
+      switch (data.type) {
+        case "jarvis_response":
+          speakText(data.text);
+          break;
+        case "gesture_recognized":
+          setLastGesture({
+            name: data.gesture,
+            command: data.command,
+            description: data.description,
+            timestamp: Date.now(),
+          });
+          break;
+        default:
+          break;
+      }
+    },
+    [speakText],
+  );
 
-  const addMessage = (message) => {
-    setMessages(prev => [...prev.slice(-50), { ...message, id: Date.now() }]);
-  };
-
-  const handleGestureDetected = useCallback((gesture) => {
-    if (readyState === 1) {
-      sendMessage(JSON.stringify({
-        type: 'gesture',
-        gesture: gesture.name,
-        confidence: gesture.confidence
-      }));
+  // Process incoming WebSocket messages
+  React.useEffect(() => {
+    if (lastMessage) {
+      try {
+        const data = JSON.parse(lastMessage.data);
+        handleServerMessage(data);
+      } catch (error) {
+        console.error("Error parsing message:", error);
+      }
     }
-  }, [sendMessage, readyState]);
+  }, [lastMessage, handleServerMessage]);
+
+  const handleGestureDetected = useCallback(
+    (gesture) => {
+      if (readyState === 1) {
+        sendMessage(
+          JSON.stringify({
+            type: "gesture",
+            gesture: gesture.name,
+            confidence: gesture.confidence,
+          }),
+        );
+      }
+    },
+    [sendMessage, readyState],
+  );
 
   const handleHandTracking = useCallback((data) => {
     setHandTrackingData(data);
   }, []);
 
-  const handleVoiceCommand = useCallback((text) => {
-    if (readyState === 1 && text.trim()) {
-      sendMessage(JSON.stringify({
-        type: 'voice',
-        text: text.trim()
-      }));
-    }
-  }, [sendMessage, readyState]);
+  const handleVoiceCommand = useCallback(
+    (text) => {
+      if (readyState === 1 && text.trim()) {
+        sendMessage(
+          JSON.stringify({
+            type: "voice",
+            text: text.trim(),
+          }),
+        );
+      }
+    },
+    [sendMessage, readyState],
+  );
 
-  const handleSendMessage = useCallback((text) => {
-    if (readyState === 1 && text.trim()) {
-      addMessage({ type: 'user', text });
-      sendMessage(JSON.stringify({
-        type: 'chat',
-        message: text.trim()
-      }));
-    }
-  }, [sendMessage, readyState]);
-
-  const handleObjectAction = useCallback((action) => {
-    if (action.type === 'create') {
-      addMessage({ type: 'system', text: `Created object #${action.object.id.toString().slice(-4)}` });
-    } else if (action.type === 'delete') {
-      addMessage({ type: 'system', text: `Deleted object` });
-    } else if (action.type === 'delete_all') {
-      addMessage({ type: 'system', text: 'Deleted all objects' });
-    } else if (action.type === 'grab') {
-      addMessage({ type: 'system', text: 'Grabbed object' });
-    } else if (action.type === 'throw') {
-      addMessage({ type: 'system', text: 'Object thrown!' });
-    } else if (action.type === 'select') {
-      addMessage({ type: 'system', text: `Selected object #${action.object.id.toString().slice(-4)}` });
+  const handleScreenShare = useCallback((data) => {
+    if (data.type === "start") {
+      console.log("Screen sharing started");
+      // Could send to server for AI analysis
+    } else if (data.type === "stop") {
+      console.log("Screen sharing stopped");
     }
   }, []);
 
-  const speakText = (text) => {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 1.1;
-      utterance.pitch = 0.9;
-      utterance.volume = 1;
-      
-      const voices = window.speechSynthesis.getVoices();
-      const jarvisVoice = voices.find(v => 
-        v.name.includes('Male') || 
-        v.name.includes('British') ||
-        v.name.includes('Daniel') ||
-        v.name.includes('Google UK English Male')
-      );
-      if (jarvisVoice) utterance.voice = jarvisVoice;
-      
-      window.speechSynthesis.speak(utterance);
+  const handleObjectAction = useCallback((action) => {
+    // Update object count based on action
+    if (action.type === "create") {
+      setObjectCount((prev) => prev + 1);
+    } else if (action.type === "delete") {
+      setObjectCount((prev) => Math.max(0, prev - 1));
+    } else if (action.type === "delete_all") {
+      setObjectCount(0);
     }
-  };
+  }, []);
 
   return (
-    <>
-      <div className="camera-section">
-        {showCamera && (
-          <GestureCamera 
-            onGestureDetected={handleGestureDetected}
-            onHandTracking={handleHandTracking}
-            lastGesture={lastGesture}
-            selectedAction={selectedAction}
-            mode="dual"
-          />
-        )}
-        
-        <ObjectManipulation 
-          handTrackingData={handTrackingData}
+    <div className="fullscreen-dashboard">
+      {/* Fullscreen Camera Section */}
+      <div className="camera-fullscreen">
+        <GestureCamera
+          onGestureDetected={handleGestureDetected}
+          onHandTracking={handleHandTracking}
+          lastGesture={lastGesture}
           selectedAction={selectedAction}
-          onObjectAction={(action) => {
-            handleObjectAction(action);
-            if (action.type === 'create') setObjectCount(prev => prev + 1);
-            if (action.type === 'delete') setObjectCount(prev => prev - 1);
-            if (action.type === 'delete_all') setObjectCount(0);
-          }}
+          mode="dual"
         />
 
-        <FloatingActions
-          selectedAction={selectedAction}
-          onActionSelect={setSelectedAction}
-          objectCount={objectCount}
+        <ObjectManipulation
           handTrackingData={handTrackingData}
+          selectedAction={selectedAction}
+          onObjectAction={handleObjectAction}
         />
       </div>
-      
-      <JarvisInterface 
-        messages={messages}
-        onSendMessage={handleSendMessage}
-        messagesEndRef={messagesEndRef}
-        isActive={isActive}
+
+      {/* Expandable Floating Navigation */}
+      <FloatingNav
+        selectedAction={selectedAction}
+        onActionSelect={setSelectedAction}
+        objectCount={objectCount}
+        onScreenShare={() => {}}
+        onShowHelp={() => setShowHelp(!showHelp)}
       />
 
-      <VoiceControl 
-        onVoiceCommand={handleVoiceCommand}
-        isListening={isActive}
-      />
+      {/* Siri Mic Button */}
+      <SiriMic onVoiceCommand={handleVoiceCommand} isListening={isActive} />
 
-      <Instructions />
-    </>
+      {/* Screen Share in corner */}
+      <div className="screen-share-corner">
+        <ScreenShare onScreenCapture={handleScreenShare} />
+      </div>
+
+      {/* Help Overlay */}
+      {showHelp && (
+        <div className="help-overlay" onClick={() => setShowHelp(false)}>
+          <div className="help-content">
+            <h3>Gesture Controls</h3>
+            <div className="gesture-list">
+              <div className="gesture-item">
+                <span className="gesture-emoji">🙏</span>
+                <span className="gesture-desc">
+                  Hands Close = Create Object
+                </span>
+              </div>
+              <div className="gesture-item">
+                <span className="gesture-emoji">🤏🤏</span>
+                <span className="gesture-desc">Both Pinch = Grab/Move</span>
+              </div>
+              <div className="gesture-item">
+                <span className="gesture-emoji">🤏</span>
+                <span className="gesture-desc">Right Pinch = Select</span>
+              </div>
+              <div className="gesture-item">
+                <span className="gesture-emoji">👈</span>
+                <span className="gesture-desc">Left Pinch = Edit</span>
+              </div>
+              <div className="gesture-item">
+                <span className="gesture-emoji">👐</span>
+                <span className="gesture-desc">Hands Apart = Delete All</span>
+              </div>
+            </div>
+            <p className="help-hint">Tap anywhere to close</p>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 

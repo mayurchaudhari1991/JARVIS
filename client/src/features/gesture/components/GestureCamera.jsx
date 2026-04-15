@@ -170,11 +170,12 @@ const GestureCamera = ({
       }
     }
 
-    // Hands close together = CREATE (increased threshold for easier triggering)
-    if (handDistance < 0.3 && !leftPinch && !rightPinch) {
+    // Hands close together = CREATE (lower threshold for easier triggering)
+    // Only trigger when hands are clearly close but not pinching
+    if (handDistance < 0.25 && !leftPinch && !rightPinch) {
       const now = Date.now();
-      // Throttle creation to once per second
-      if (now - lastCreateTime.current > 1000) {
+      // Throttle creation to once per 800ms
+      if (now - lastCreateTime.current > 800) {
         lastCreateTime.current = now;
         const centerX = (leftWrist.x + rightWrist.x) / 2;
         const centerY = (leftWrist.y + rightWrist.y) / 2;
@@ -182,10 +183,13 @@ const GestureCamera = ({
           ...prev,
           handDistance: handDistance.toFixed(3),
           gesture: "CREATE_OBJECT",
+          leftPinch: false,
+          rightPinch: false,
         }));
         return {
           type: "CREATE_OBJECT",
           position: { x: centerX, y: centerY },
+          handDistance,
         };
       }
     }
@@ -512,7 +516,7 @@ const GestureCamera = ({
             <div className="debug-item">
               <span className="debug-label">Distance:</span>
               <span
-                className={`debug-value ${parseFloat(debugInfo.handDistance) < 0.3 ? "ready" : ""}`}
+                className={`debug-value ${parseFloat(debugInfo.handDistance) < 0.25 ? "ready" : ""}`}
               >
                 {debugInfo.handDistance}
               </span>
@@ -522,7 +526,7 @@ const GestureCamera = ({
               <span
                 className={`debug-badge ${debugInfo.leftPinch ? "active" : ""}`}
               >
-                Pinch
+                {debugInfo.leftPinch ? "Pinch" : "Open"}
               </span>
             </div>
             <div className="debug-item">
@@ -530,13 +534,13 @@ const GestureCamera = ({
               <span
                 className={`debug-badge ${debugInfo.rightPinch ? "active" : ""}`}
               >
-                Pinch
+                {debugInfo.rightPinch ? "Pinch" : "Open"}
               </span>
             </div>
-            {parseFloat(debugInfo.handDistance) < 0.3 &&
+            {parseFloat(debugInfo.handDistance) < 0.25 &&
               !debugInfo.leftPinch &&
               !debugInfo.rightPinch && (
-                <div className="create-ready">🙏 CREATE READY</div>
+                <div className="create-ready">🙏 CREATE</div>
               )}
           </div>
         </div>

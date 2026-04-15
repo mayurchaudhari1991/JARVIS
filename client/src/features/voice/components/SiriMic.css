@@ -1,0 +1,198 @@
+.siri-mic-container {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  z-index: 1000;
+}
+
+/* Transcript Bubble */
+.transcript-bubble {
+  position: absolute;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.9);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  border-radius: 20px;
+  padding: 12px 24px;
+  min-width: 200px;
+  max-width: 400px;
+  text-align: center;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 30px rgba(0, 212, 255, 0.2);
+  opacity: 0;
+  animation: fadeInUp 0.3s forwards;
+}
+
+.transcript-bubble.active {
+  border-color: rgba(0, 212, 255, 0.6);
+  box-shadow: 0 4px 40px rgba(0, 212, 255, 0.4);
+}
+
+.transcript-bubble p {
+  color: #00d4ff;
+  font-size: 14px;
+  margin: 0;
+  font-family: 'Rajdhani', sans-serif;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* Siri Mic Button */
+.siri-mic-button {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease;
+}
+
+.siri-mic-button:hover {
+  transform: scale(1.05);
+}
+
+.siri-mic-button:active {
+  transform: scale(0.95);
+}
+
+/* Core Circle */
+.mic-core {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1a1a2e 0%, #0a0a1a 100%);
+  border: 2px solid rgba(0, 212, 255, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: all 0.3s ease;
+}
+
+.siri-mic-button.listening .mic-core {
+  background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+  border-color: #00d4ff;
+  box-shadow: 0 0 30px rgba(0, 212, 255, 0.6);
+}
+
+.mic-icon {
+  width: 28px;
+  height: 28px;
+  fill: #00d4ff;
+  transition: all 0.3s ease;
+}
+
+.siri-mic-button.listening .mic-icon {
+  fill: #ffffff;
+}
+
+/* Animated Rings */
+.mic-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 212, 255, 0.3);
+  opacity: 0;
+}
+
+.ring-1 {
+  width: 80px;
+  height: 80px;
+  animation: none;
+}
+
+.ring-2 {
+  width: 100px;
+  height: 100px;
+  animation: none;
+}
+
+.ring-3 {
+  width: 120px;
+  height: 120px;
+  animation: none;
+}
+
+/* Listening Animation */
+.siri-mic-button.listening .ring-1 {
+  animation: siriPulse 1.5s ease-out infinite;
+}
+
+.siri-mic-button.listening .ring-2 {
+  animation: siriPulse 1.5s ease-out infinite 0.3s;
+}
+
+.siri-mic-button.listening .ring-3 {
+  animation: siriPulse 1.5s ease-out infinite 0.6s;
+}
+
+@keyframes siriPulse {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.8;
+    border-color: rgba(0, 212, 255, 0.5);
+  }
+  50% {
+    opacity: 0.4;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+    border-color: rgba(0, 212, 255, 0);
+  }
+}
+
+/* Status Text */
+.mic-status {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-family: 'Orbitron', sans-serif;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .siri-mic-container {
+    bottom: 30px;
+  }
+  
+  .siri-mic-button {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .mic-core {
+    width: 45px;
+    height: 45px;
+  }
+  
+  .mic-icon {
+    width: 22px;
+    height: 22px;
+  }
+  
+  .mic-status {
+    font-size: 9px;
+  }
+}
