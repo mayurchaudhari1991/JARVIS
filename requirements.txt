@@ -1,0 +1,16 @@
+# JARVIS Gesture-Controlled AI Assistant
+# This project uses Node.js, not Python
+# 
+# INSTALLATION:
+# 1. Install Node.js from https://nodejs.org/
+# 2. Install Ollama from https://ollama.com/
+# 3. Run: ollama pull gemma:4b
+# 4. Run: start-jarvis.bat (Windows) or npm run dev
+#
+# PREREQUISITES:
+# - Node.js v16+
+# - Ollama
+# - Webcam for gestures
+# - Microphone for voice (optional)
+#
+# See README.md for full instructions

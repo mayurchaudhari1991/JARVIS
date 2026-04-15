@@ -1,0 +1,108 @@
+.instructions-overlay {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  z-index: 1000;
+  max-width: 300px;
+}
+
+.instructions-panel {
+  background: rgba(10, 10, 15, 0.95);
+  border: 1px solid var(--jarvis-blue);
+  border-radius: 12px;
+  padding: 20px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 40px rgba(0, 212, 255, 0.3);
+}
+
+.instructions-panel h3 {
+  font-family: 'Orbitron', sans-serif;
+  color: var(--jarvis-blue);
+  font-size: 14px;
+  margin-bottom: 15px;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  border-bottom: 1px solid var(--jarvis-blue-dim);
+  padding-bottom: 10px;
+}
+
+.instruction-section {
+  margin-bottom: 15px;
+  padding: 10px;
+  background: rgba(0, 212, 255, 0.05);
+  border-radius: 8px;
+  border-left: 3px solid var(--jarvis-blue);
+}
+
+.instruction-section h4 {
+  font-family: 'Orbitron', sans-serif;
+  color: var(--jarvis-blue);
+  font-size: 12px;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.instruction-section p {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 5px 0;
+  line-height: 1.4;
+}
+
+.instruction-section p strong {
+  color: var(--jarvis-success);
+}
+
+.tip {
+  color: var(--jarvis-warning) !important;
+  font-size: 11px !important;
+  font-style: italic;
+  margin-top: 8px !important;
+}
+
+.debug-guide {
+  margin-top: 15px;
+  padding: 10px;
+  background: rgba(255, 107, 53, 0.1);
+  border-radius: 8px;
+  border: 1px solid var(--jarvis-accent);
+}
+
+.debug-guide h4 {
+  font-family: 'Orbitron', sans-serif;
+  color: var(--jarvis-accent);
+  font-size: 11px;
+  margin-bottom: 8px;
+}
+
+.debug-guide ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.debug-guide li {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 5px 0;
+  padding-left: 15px;
+  position: relative;
+}
+
+.debug-guide li::before {
+  content: '>';
+  position: absolute;
+  left: 0;
+  color: var(--jarvis-accent);
+}
+
+.debug-guide strong {
+  color: var(--jarvis-blue);
+}
+
+@media (max-width: 1200px) {
+  .instructions-overlay {
+    display: none;
+  }
+}

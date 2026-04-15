@@ -1,0 +1,382 @@
+.app {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Background Effects */
+.app-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  background: 
+    radial-gradient(ellipse at 20% 80%, rgba(0, 212, 255, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+    var(--jarvis-darker);
+}
+
+.grid-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+  pointer-events: none;
+}
+
+.gradient-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.3;
+  animation: float 6s ease-in-out infinite;
+}
+
+.orb-1 {
+  width: 400px;
+  height: 400px;
+  background: var(--jarvis-blue);
+  top: -100px;
+  right: -100px;
+  animation-delay: 0s;
+}
+
+.orb-2 {
+  width: 300px;
+  height: 300px;
+  background: var(--jarvis-accent);
+  bottom: -50px;
+  left: -50px;
+  animation-delay: -2s;
+  opacity: 0.15;
+}
+
+.orb-3 {
+  width: 200px;
+  height: 200px;
+  background: var(--jarvis-success);
+  bottom: 30%;
+  right: 20%;
+  animation-delay: -4s;
+  opacity: 0.1;
+}
+
+/* Header */
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  border-bottom: 1px solid var(--jarvis-blue-dim);
+  background: rgba(10, 10, 15, 0.8);
+  backdrop-filter: blur(10px);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.logo-icon {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-ring {
+  position: absolute;
+  border: 2px solid var(--jarvis-blue);
+  border-radius: 50%;
+  animation: spin linear infinite;
+}
+
+.ring-1 {
+  width: 60px;
+  height: 60px;
+  border-top-color: transparent;
+  animation-duration: 3s;
+}
+
+.ring-2 {
+  width: 45px;
+  height: 45px;
+  border-bottom-color: transparent;
+  animation-duration: 2s;
+  animation-direction: reverse;
+}
+
+.ring-3 {
+  width: 30px;
+  height: 30px;
+  border-left-color: transparent;
+  animation-duration: 1.5s;
+}
+
+.logo-text {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--jarvis-blue);
+  text-shadow: 0 0 20px var(--jarvis-blue);
+}
+
+.logo-title h1 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--jarvis-blue);
+  letter-spacing: 4px;
+}
+
+.logo-title span {
+  font-size: 12px;
+  color: var(--jarvis-blue-dim);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid var(--jarvis-blue-dim);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+.status-indicator.connected {
+  border-color: var(--jarvis-success);
+  color: var(--jarvis-success);
+}
+
+.status-indicator.connected .status-dot {
+  background: var(--jarvis-success);
+}
+
+.status-indicator.disconnected {
+  border-color: #ff4444;
+  color: #ff4444;
+}
+
+.status-indicator.disconnected .status-dot {
+  background: #ff4444;
+}
+
+.status-indicator.connecting {
+  border-color: var(--jarvis-warning);
+  color: var(--jarvis-warning);
+}
+
+.status-indicator.connecting .status-dot {
+  background: var(--jarvis-warning);
+}
+
+.camera-toggle {
+  padding: 10px 20px;
+  background: transparent;
+  border: 1px solid var(--jarvis-blue);
+  color: var(--jarvis-blue);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.camera-toggle:hover,
+.camera-toggle.active {
+  background: var(--jarvis-blue);
+  color: var(--jarvis-darker);
+  box-shadow: 0 0 20px var(--jarvis-blue-dim);
+}
+
+/* Main Content - Immersive 70/30 Layout */
+.app-main {
+  flex: 1;
+  display: flex;
+  padding: 15px 20px;
+  gap: 20px;
+  overflow: hidden;
+}
+
+.app-main.immersive {
+  padding: 10px 15px;
+  gap: 15px;
+}
+
+.camera-section {
+  flex: 0 0 70%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  min-width: 0;
+  gap: 10px;
+}
+
+.camera-section .gesture-camera {
+  flex: 0 0 auto;
+  align-self: center;
+}
+
+.camera-section .object-manipulation {
+  flex: 1;
+  min-height: 100px;
+}
+
+/* Side chat panel - 30% */
+.jarvis-interface {
+  flex: 0 0 30% !important;
+  width: auto !important;
+  min-width: 280px !important;
+  max-width: 350px !important;
+}
+
+/* Gesture Hint Panel */
+.gesture-hint {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: rgba(10, 10, 15, 0.95);
+  border: 1px solid var(--jarvis-blue-dim);
+  border-radius: 8px;
+  padding: 20px;
+  backdrop-filter: blur(10px);
+  max-width: 250px;
+}
+
+.gesture-hint h3 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 14px;
+  margin-bottom: 15px;
+  color: var(--jarvis-blue);
+  text-align: center;
+}
+
+.gesture-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.gesture-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.8);
+  padding: 5px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.gesture-item:hover {
+  background: var(--jarvis-blue-dim);
+  color: var(--jarvis-blue);
+}
+
+.gesture-icon {
+  font-size: 20px;
+  width: 30px;
+  text-align: center;
+}
+
+.gesture-hint.enhanced {
+  max-width: 280px;
+  padding: 15px;
+}
+
+.gesture-hint.enhanced .gesture-icon {
+  font-size: 22px;
+  width: 35px;
+}
+
+.gesture-hint.enhanced .gesture-item {
+  font-size: 12px;
+  padding: 6px 8px;
+}
+
+/* Responsive for immersive layout */
+@media (max-width: 1400px) {
+  .app-main.immersive {
+    flex-direction: column;
+    padding: 10px 15px;
+  }
+  
+  .camera-section {
+    flex: 1;
+    width: 100%;
+    order: -1;
+  }
+  
+  .jarvis-interface {
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    max-width: none !important;
+    min-height: 200px;
+    max-height: 250px;
+  }
+  
+  .camera-container {
+    width: 100%;
+    max-width: 640px;
+  }
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .app-main {
+    flex-direction: column;
+    padding: 15px 20px;
+  }
+  
+  .gesture-hint {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .app-header {
+    padding: 15px 20px;
+  }
+  
+  .logo-title span {
+    display: none;
+  }
+  
+  .header-controls {
+    gap: 10px;
+  }
+}
