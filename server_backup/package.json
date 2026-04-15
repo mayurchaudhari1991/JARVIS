@@ -1,11 +1,11 @@
 {
   "name": "jarvis-server",
   "version": "1.0.0",
-  "description": "JARVIS Backend Server - Modular Architecture",
-  "main": "app.js",
+  "description": "JARVIS Backend Server",
+  "main": "index.js",
   "scripts": {
-    "start": "node app.js",
-    "dev": "nodemon app.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
   "dependencies": {
     "express": "^4.18.2",

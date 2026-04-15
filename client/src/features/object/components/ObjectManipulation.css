@@ -1,0 +1,150 @@
+.object-manipulation {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+  background: rgba(10, 10, 15, 0.3);
+  border: 1px solid var(--jarvis-blue-dim);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.objects-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+.manipulable-object {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  transition: box-shadow 0.3s ease;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.manipulable-object.cube {
+  border-radius: 8px;
+}
+
+.manipulable-object.sphere {
+  border-radius: 50%;
+}
+
+.manipulable-object.selected {
+  animation: selectedPulse 1.5s infinite;
+}
+
+@keyframes selectedPulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.1); }
+}
+
+.manipulable-object.grabbed {
+  z-index: 100;
+}
+
+.object-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: inherit;
+  opacity: 0.5;
+  filter: blur(10px);
+}
+
+.grab-indicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.grab-ring {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  border: 2px solid var(--jarvis-blue);
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: grabPulse 0.5s ease-out infinite;
+}
+
+.grab-ring.delay-1 {
+  animation-delay: 0.25s;
+}
+
+@keyframes grabPulse {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.5);
+    opacity: 0;
+  }
+}
+
+.velocity-indicator {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  border: 2px solid var(--jarvis-blue-dim);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.velocity-arrow {
+  height: 3px;
+  background: linear-gradient(90deg, var(--jarvis-blue), var(--jarvis-success));
+  border-radius: 2px;
+  transform-origin: left center;
+  transition: width 0.1s ease, transform 0.1s ease;
+}
+
+.object-stats {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  display: flex;
+  gap: 20px;
+  font-size: 12px;
+  color: var(--jarvis-blue);
+  font-family: 'Orbitron', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 1px solid var(--jarvis-blue-dim);
+}
+
+/* Grid overlay for visual feedback */
+.object-manipulation::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    linear-gradient(rgba(0, 212, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 212, 255, 0.05) 1px, transparent 1px);
+  background-size: 50px 50px;
+  pointer-events: none;
+}

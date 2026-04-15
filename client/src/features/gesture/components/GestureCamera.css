@@ -1,0 +1,320 @@
+.gesture-camera {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.camera-container {
+  position: relative;
+  width: 640px;
+  height: 480px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 2px solid var(--jarvis-blue-dim);
+  background: var(--jarvis-dark);
+  box-shadow: 
+    0 0 60px rgba(0, 212, 255, 0.25),
+    inset 0 0 120px rgba(0, 212, 255, 0.05);
+}
+
+/* Neural Interface Overlay */
+.camera-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    linear-gradient(45deg, transparent 48%, rgba(0, 212, 255, 0.03) 50%, transparent 52%),
+    linear-gradient(-45deg, transparent 48%, rgba(0, 212, 255, 0.03) 50%, transparent 52%);
+  background-size: 30px 30px;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.camera-container::after {
+  content: 'NEURAL_INTERFACE // DUAL_HAND_TRACKING';
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Orbitron', sans-serif;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--jarvis-blue);
+  text-shadow: 0 0 10px var(--jarvis-blue);
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 4px 12px;
+  border-radius: 4px;
+  border: 1px solid var(--jarvis-blue-dim);
+}
+
+.camera-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1); /* Mirror effect */
+  opacity: 0.6;
+}
+
+.camera-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: scaleX(-1); /* Mirror effect */
+}
+
+.camera-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 10, 15, 0.9);
+  gap: 15px;
+  color: var(--jarvis-blue);
+  font-size: 14px;
+  z-index: 10;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--jarvis-blue-dim);
+  border-top-color: var(--jarvis-blue);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.camera-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.fps-counter {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: var(--jarvis-blue);
+  font-family: 'Orbitron', monospace;
+}
+
+.tracking-status {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.7);
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  color: var(--jarvis-blue);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  animation: pulse 2s infinite;
+}
+
+/* Debug Overlay */
+.debug-overlay {
+  position: absolute;
+  top: 40px;
+  left: 10px;
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid var(--jarvis-blue-dim);
+  border-radius: 8px;
+  padding: 10px;
+  font-family: 'Orbitron', monospace;
+  font-size: 11px;
+  color: var(--jarvis-blue);
+  min-width: 120px;
+}
+
+.debug-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.debug-label {
+  color: rgba(255, 255, 255, 0.6);
+  margin-right: 10px;
+}
+
+.debug-value {
+  color: var(--jarvis-blue);
+  font-weight: 600;
+}
+
+.debug-value.ready {
+  color: var(--jarvis-success);
+  text-shadow: 0 0 10px var(--jarvis-success);
+}
+
+.create-ready {
+  margin-top: 8px;
+  padding: 8px;
+  background: var(--jarvis-success);
+  color: var(--jarvis-darker);
+  border-radius: 4px;
+  text-align: center;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 10px;
+  animation: pulse 0.5s infinite;
+}
+
+.debug-badge {
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 10px;
+  transition: all 0.2s;
+}
+
+.debug-badge.active {
+  background: var(--jarvis-success);
+  color: var(--jarvis-darker);
+  box-shadow: 0 0 10px var(--jarvis-success);
+}
+
+.debug-gesture {
+  margin-top: 8px;
+  padding: 5px;
+  background: var(--jarvis-blue);
+  color: var(--jarvis-darker);
+  border-radius: 4px;
+  text-align: center;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 10px;
+  animation: glow 0.5s ease;
+}
+
+/* Corner Decorations */
+.corner-tl, .corner-tr, .corner-bl, .corner-br {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-color: var(--jarvis-blue);
+  pointer-events: none;
+}
+
+.corner-tl {
+  top: -2px;
+  left: -2px;
+  border-top: 2px solid;
+  border-left: 2px solid;
+}
+
+.corner-tr {
+  top: -2px;
+  right: -2px;
+  border-top: 2px solid;
+  border-right: 2px solid;
+}
+
+.corner-bl {
+  bottom: -2px;
+  left: -2px;
+  border-bottom: 2px solid;
+  border-left: 2px solid;
+}
+
+.corner-br {
+  bottom: -2px;
+  right: -2px;
+  border-bottom: 2px solid;
+  border-right: 2px solid;
+}
+
+/* Gesture Display */
+.gesture-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 80px;
+  padding: 15px 50px;
+  background: rgba(10, 10, 15, 0.8);
+  border: 1px solid var(--jarvis-blue-dim);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  opacity: 0.5;
+  width: 400px;
+}
+
+.gesture-display.active {
+  opacity: 1;
+  border-color: var(--jarvis-blue);
+  box-shadow: 0 0 30px var(--jarvis-blue-dim);
+  animation: glow 0.5s ease;
+}
+
+.gesture-icon-large {
+  font-size: 36px;
+  margin-bottom: 5px;
+  animation: float 0.5s ease;
+}
+
+.gesture-label {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+/* Last Gesture */
+.last-gesture {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 10px 15px;
+  background: rgba(0, 212, 255, 0.1);
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--jarvis-blue-dim);
+}
+
+.gesture-time {
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .gesture-camera {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .camera-container {
+    width: 280px;
+    height: 210px;
+  }
+}
